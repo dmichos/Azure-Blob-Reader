@@ -243,8 +243,8 @@ function Format-HexDump {
         [byte[]]$Data,
         [int]$Offset = 0,
         [int]$Width = 16,
-        [int]$MaxLines = [int]::MaxValue,   
-        [string]$Color = "White"   
+        [int]$MaxLines = [int]::MaxValue,  # Default to no limit
+        [string]$Color = "White"  # Default color
     )
 
     $lineCount = 0
@@ -347,6 +347,8 @@ function Extract-PDFStreams {
     }
 
     if ($startPositions.Count -gt 0 -and $endPositions.Count -gt 0) {
+        Write-Output "                              " 
+        Write-host " ############# PDF ####################" -ForegroundColor Cyan
         Write-Output "                              "
         Write-Host "PDF STREAM Found $($startPositions.Count) start patterns and $($endPositions.Count) end patterns." -ForegroundColor Green
     } else {
@@ -367,18 +369,19 @@ function Extract-PDFStreams {
             $streamFileName = "PDFStream_${j}.pdf"
             $streamFilePath = Join-Path $fullOutputDir $streamFileName
             [System.IO.File]::WriteAllBytes($streamFilePath, $pdfStream)
+            Write-Output ""
             Write-Output "Extracted PDF stream saved to: $streamFilePath"
+            Write-Output ""
+            Write-Host "Hex dump of the extracted PDF stream:" -ForegroundColor Green
 
-            # Print hex dump of the extracted PDF stream
-            Write-Output "Hex dump of the extracted PDF stream:"
-            Format-HexDump -Data $pdfStream -Offset $start -MaxLines 4 -Color "Red"
+            Format-HexDump -Data $pdfStream -Offset $start -MaxLines 7 -Color "Red"
 
         } else {
             Write-Host "PDF start found at offset $start but no corresponding end pattern found." -ForegroundColor Red
         }
     }
 }
-
+ ###### MAKE SURE TTHAT YOU CHANGED THE PATH OF THE BLOB
 $blobPath = "C:\Users\test\Desktop\32685_7b7d79488a8fcf482dd03104b09b3624_00000000000000000000000000000000"
 $outputDir = "ExtractedFiles"
 
