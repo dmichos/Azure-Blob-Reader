@@ -10,6 +10,7 @@
 
 ## Usage
 - Setup: Ensure the blob file to be analyzed is accessible on your system.
+- Change the path of the blob inside the code
 - Run the Script: Execute the script in PowerShell, specifying the path to your blob file and the output directory for extracted files.
  -Review Results: Examine the extracted files, hashes, and API patterns identified by the script.
 
