@@ -14,6 +14,5 @@
  -Review Results: Examine the extracted files, hashes, and API patterns identified by the script.
 
   ## Example
-```
-
-```
+ 
+ ![github](https://github.com/user-attachments/assets/f17c2412-a2db-47eb-a38a-f4e7a18bbad9)
