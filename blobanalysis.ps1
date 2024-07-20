@@ -95,7 +95,7 @@ function Extract-HeadersFromBlob {
     }
 
     if ($foundSignatures.Count -eq 0) {
-        Write-Output "No headers found in the blob file."
+        Write-host "No headers found in the blob file." -ForegroundColor Red
         return
     }
 
@@ -121,7 +121,7 @@ function Extract-HeadersFromBlob {
                     $hexLine += "   "
                 }
             }
-            $hexDump += "$hexLine $asciiLine`n"
+            $hexDump += "${hexLine} ${asciiLine}`n"
         }
         return $hexDump
     }
@@ -157,7 +157,7 @@ function Extract-HeadersFromBlob {
     }
 
     Write-Output "                              "
-    Write-Output "==>> Reconstructing blob <==="
+    Write-host "==>> Reconstructing blob <===" -ForegroundColor RED
 
     $constructedStrings = @()
     for ($i = 0; $i -lt $fileContent.Length; $i++) {
@@ -176,6 +176,7 @@ function Extract-HeadersFromBlob {
     $constructedStringsFile = Join-Path $fullOutputDir "constructed_strings.txt"
     try {
         [System.IO.File]::WriteAllLines($constructedStringsFile, $constructedStrings)
+        Write-Output ""
         Write-Output "Constructed strings saved to: $constructedStringsFile"
     } catch {
         Write-Error "Failed to save the constructed strings file. Error: $_"
@@ -187,6 +188,7 @@ function Extract-HeadersFromBlob {
         $newBlobSize = (Get-Item $newBlobPath).Length
         Write-Output "                              "
         Write-Output "New_blob to read: $newBlobPath (Size: $newBlobSize bytes)"
+        Write-Output ""
     } catch {
         Write-Error "Failed to create the new blob file. Error: $_"
         return
@@ -199,7 +201,7 @@ function Extract-HeadersFromBlob {
             Write-Host "Header '$type' found at offset: $startPos" -ForegroundColor Green
 
             $hexDump = Get-HexDump -Content $fileContent -StartOffset ([Math]::Max($startPos - 32, 0)) -Length 64 -Signature $headerSignatures[$type]
-            Write-Host $hexDump -ForegroundColor Cyan
+            Write-Host $hexDump -ForegroundColor cyan
 
             $fileName = "${type}_${startPos}.bin"
             $filePath = Join-Path $fullOutputDir $fileName
@@ -233,6 +235,42 @@ function Extract-HeadersFromBlob {
                 Write-Error "Failed to save the extracted file. Error: $_"
             }
         }
+    }
+}
+
+function Format-HexDump {
+    param (
+        [byte[]]$Data,
+        [int]$Offset = 0,
+        [int]$Width = 16,
+        [int]$MaxLines = [int]::MaxValue,   
+        [string]$Color = "White"   
+    )
+
+    $lineCount = 0
+
+    for ($i = 0; $i -lt $Data.Length; $i += $Width) {
+        if ($lineCount -ge $MaxLines) { break }
+
+        $hex = ""
+        $ascii = ""
+        for ($j = 0; $j -lt $Width; $j++) {
+            if ($i + $j -lt $Data.Length) {
+                $byte = $Data[$i + $j]
+                $hex += "{0:X2} " -f $byte
+                if ($byte -ge 32 -and $byte -le 126) {
+                    $ascii += [char]$byte
+                } else {
+                    $ascii += "."
+                }
+            } else {
+                $hex += "   "
+            }
+        }
+        $address = "{0:X8}" -f ($Offset + $i)
+        Write-Host "${address}: $hex $ascii" -ForegroundColor $Color
+        
+        $lineCount++
     }
 }
 
@@ -321,15 +359,20 @@ function Extract-PDFStreams {
         $end = if ($j -lt $endPositions.Count) { $endPositions[$j] } else { $null }
 
         if ($end) {
+            Write-Output ""
             Write-Host "PDF stream found from offset $start to $end" -ForegroundColor Green
 
-            
             $length = $end - $start
             $pdfStream = $fileContent[$start..($end - 1)]
             $streamFileName = "PDFStream_${j}.pdf"
             $streamFilePath = Join-Path $fullOutputDir $streamFileName
             [System.IO.File]::WriteAllBytes($streamFilePath, $pdfStream)
             Write-Output "Extracted PDF stream saved to: $streamFilePath"
+
+            # Print hex dump of the extracted PDF stream
+            Write-Output "Hex dump of the extracted PDF stream:"
+            Format-HexDump -Data $pdfStream -Offset $start -MaxLines 4 -Color "Red"
+
         } else {
             Write-Host "PDF start found at offset $start but no corresponding end pattern found." -ForegroundColor Red
         }
