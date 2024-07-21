@@ -1,4 +1,4 @@
-# Blob Analysis Script
+# Blob Azure Analysis Script
 ## Overview
  This PowerShell script is designed to perform detailed analysis on binary blobs, specifically focusing on extracting file headers and searching for known API patterns within executables. The script is useful for security researchers and forensic analysts who need to dissect and examine binary data for various file signatures and potential malicious content.
 
