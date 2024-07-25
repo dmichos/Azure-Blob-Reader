@@ -7,6 +7,8 @@
  - API Pattern Search: Searches for known API function calls within executable files, which can indicate potential malicious behavior.
  - Hash Computation: Computes and displays MD5 and SHA1 hashes for the extracted files.
  - Reconstructed Strings: Reconstructs and saves readable strings found within the blob, aiding in further analysis.
+ - IOC Extractor
+ - Defender KQL queries For each IOC ( for faster analysis) 
 
 ## Usage
 - Setup: Ensure the blob file to be analyzed is accessible on your system.
