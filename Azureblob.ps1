@@ -240,11 +240,11 @@ function Extract-HeadersFromBlob {
 
     Write-Host ""
     Write-Host "##########################################################" -ForegroundColor cyan
-    Write-Host "            Indicators of Compromise (IOCs)              #" -ForegroundColor Green
-    Write-Host "       UUIDS - Emails - IPs - Domains - URLS             #" -ForegroundColor Green
-    Write-Host "  IOCS Files will be created with Kql query For Defender #" -ForegroundColor Red
+    Write-Host "            Indicators of Compromise (IOCs)              " -ForegroundColor Green
+    Write-Host "       UUIDS - Emails - IPs - Domains - URLS             " -ForegroundColor Green
+    Write-Host "  IOCS Files will be created with Kql query For Defender " -ForegroundColor Red
     Write-Host "##########################################################" -ForegroundColor  cyan
-    Write-Host "             IOC Extractor Phase 2 Initiated             #" -ForegroundColor Red
+    Write-Host "             IOC Extractor Phase 2 Initiated             " -ForegroundColor Red
     Write-Host "##########################################################" -ForegroundColor  cyan
     Write-Host ""
 
@@ -255,7 +255,7 @@ function Extract-HeadersFromBlob {
     $indicators.UUIDs | ForEach-Object { Write-Host $_ -ForegroundColor Green }
     $UUIDsFilePath = Join-Path $fullOutputDir "UUIDs_SearchPattern.txt"
     Create-DefenderSearchFile -FileName $UUIDsFilePath -Indicators $indicators.UUIDs -Type "UUIDs"
-    Write-Host "Defender Kql Query Created: $UUIDsFilePath" -ForegroundColor Cyan
+    Write-Host "[!] Defender Kql Query Created: $UUIDsFilePath" -ForegroundColor Cyan
 
  
     Write-Host ""
