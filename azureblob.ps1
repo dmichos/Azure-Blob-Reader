@@ -252,33 +252,41 @@ function Extract-HeadersFromBlob {
  
     Write-Host ""
     Write-Host "UUIDs Found:" -ForegroundColor Red
+    Write-Host ""
     $indicators.UUIDs | ForEach-Object { Write-Host $_ -ForegroundColor Green }
     $UUIDsFilePath = Join-Path $fullOutputDir "UUIDs_SearchPattern.txt"
     Create-DefenderSearchFile -FileName $UUIDsFilePath -Indicators $indicators.UUIDs -Type "UUIDs"
+    Write-Host ""
     Write-Host "[!] Defender Kql Query Created: $UUIDsFilePath" -ForegroundColor Cyan
 
  
     Write-Host ""
     Write-Host "Emails Found:" -ForegroundColor Red
+    Write-Host ""
     $indicators.Emails | ForEach-Object { Write-Host $_ -ForegroundColor Green }
     $EmailsFilePath = Join-Path $fullOutputDir "Emails_SearchPattern.txt"
     Create-DefenderSearchFile -FileName $EmailsFilePath -Indicators $indicators.Emails -Type "Emails"
+    Write-Host ""
     Write-Host "[!] Defender Kql Query Created: $EmailsFilePath" -ForegroundColor Cyan
 
  
     Write-Host ""
     Write-Host "IPs Found:" -ForegroundColor Red
+    Write-Host ""
     $indicators.IPs | ForEach-Object { Write-Host $_ -ForegroundColor Green }
     $IPsFilePath = Join-Path $fullOutputDir "IPs_SearchPattern.txt"
     Create-DefenderSearchFile -FileName $IPsFilePath -Indicators $indicators.IPs -Type "IPs"
+    Write-Host ""
     Write-Host "[!] Defender Kql Query Created: $IPsFilePath" -ForegroundColor Cyan
 
  
     Write-Host ""
     Write-Host "Domains Found:" -ForegroundColor Red
+    Write-Host ""
     $indicators.Domains | ForEach-Object { Write-Host $_ -ForegroundColor Green }
     $DomainsFilePath = Join-Path $fullOutputDir "Domains_SearchPattern.txt"
     Create-DefenderSearchFile -FileName $DomainsFilePath -Indicators $indicators.Domains -Type "Domains"
+    Write-Host ""
     Write-Host "[!] Defender Kql Query Created: $DomainsFilePath" -ForegroundColor Cyan
 
 }
