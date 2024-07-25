@@ -26,7 +26,7 @@ function Extract-HeadersFromBlob {
         "DOCX"  = [byte[]]@(0x50, 0x4B, 0x03, 0x04)
         "EXE"   = [byte[]]@(0x4D, 0x5A)
         "ELF"   = [byte[]]@(0x7F, 0x45, 0x4C, 0x46)
-        "RUST"  = [byte[]](0x2F, 0x2F, 0x21)  # Rust files often start with //!
+        "RUST"  = [byte[]](0x2F, 0x2F, 0x21)  
     }
 
     $apiPatterns = @(
@@ -288,8 +288,8 @@ function Format-HexDump {
         [byte[]]$Data,
         [int]$Offset = 0,
         [int]$Width = 16,
-        [int]$MaxLines = [int]::MaxValue,  # Default to no limit
-        [string]$Color = "White"  # Default color
+        [int]$MaxLines = [int]::MaxValue,  
+        [string]$Color = "White" 
     )
 
     $lineCount = 0
@@ -451,7 +451,7 @@ function Extract-IndicatorsFromBinaryFile {
         [string]$FilePath
     )
 
-    # Function to reconstruct strings from binary data
+   
     function Reconstruct-Strings {
         param (
             [byte[]]$BinaryData
@@ -478,14 +478,14 @@ function Extract-IndicatorsFromBinaryFile {
         return $reconstructedStrings
     }
 
-    # Read the binary file
+    
     $binaryData = [System.IO.File]::ReadAllBytes($FilePath)
     $reconstructedStrings = Reconstruct-Strings -BinaryData $binaryData
 
-    # Convert the reconstructed strings array to a single string
+  
     $binaryString = $reconstructedStrings -join " "
 
-    # Define the regex patterns
+  
     $uuidPattern = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'
     $emailPattern = '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     $ipPattern = '\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
@@ -493,7 +493,7 @@ function Extract-IndicatorsFromBinaryFile {
     $urlPattern = '\bhttps?://[^\s/$.?#].[^\s]*\b'
     $filePathPattern = '\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}/[^\s/$.?#].[^\s]*\b'
 
-    # Extract indicators
+   
     $uuids = [System.Text.RegularExpressions.Regex]::Matches($binaryString, $uuidPattern) | ForEach-Object { $_.Value }
     $emails = [System.Text.RegularExpressions.Regex]::Matches($binaryString, $emailPattern) | ForEach-Object { $_.Value }
     $ips = [System.Text.RegularExpressions.Regex]::Matches($binaryString, $ipPattern) | ForEach-Object { $_.Value }
@@ -501,14 +501,14 @@ function Extract-IndicatorsFromBinaryFile {
     $urls = [System.Text.RegularExpressions.Regex]::Matches($binaryString, $urlPattern) | ForEach-Object { $_.Value }
     $filePaths = [System.Text.RegularExpressions.Regex]::Matches($binaryString, $filePathPattern) | ForEach-Object { $_.Value }
 
-    # Combine URLs and file paths
+   
     $allUrls = $urls + $filePaths
 
-    # Debug output of raw domain matches
+   
     Write-Output "Debug - Raw Domains Found:"
     $domains | ForEach-Object { Write-Output $_ }
 
-    # Validate domains
+   
     $validDomains = @()
     foreach ($domain in $domains) {
         if (Validate-Domain -Domain $domain) {
@@ -516,7 +516,7 @@ function Extract-IndicatorsFromBinaryFile {
         }
     }
 
-    # Debug output of valid domain matches
+  
     Write-Output "Debug - Valid Domains Found:"
     $validDomains | ForEach-Object { Write-Output $_ }
 
@@ -539,14 +539,14 @@ function Create-DefenderSearchFile {
     $searchPattern = "DeviceNetworkEvents`n"
 
     if ($Type -eq "UUIDs" -or $Type -eq "Emails" -or $Type -eq "IPs") {
-        # Create the search pattern
+        
         $searchPattern += "| search "
         foreach ($indicator in $Indicators) {
             $searchPattern += "`"$indicator`" or`n        "
         }
         $searchPattern = $searchPattern.TrimEnd(" or`n        ")
     } elseif ($Type -eq "Domains" -or $Type -eq "URLs") {
-        # Create the search pattern
+       
         $searchPattern += "| where (RemoteUrl == "
         foreach ($indicator in $Indicators) {
             $searchPattern += "`"$indicator`" or`n        RemoteUrl == "
@@ -555,7 +555,7 @@ function Create-DefenderSearchFile {
         $searchPattern += ")"
     }
 
-    # Write the search pattern to the file
+   
     Set-Content -Path $FileName -Value $searchPattern
 }
 
