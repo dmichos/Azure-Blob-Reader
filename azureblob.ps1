@@ -545,25 +545,33 @@ function Create-DefenderSearchFile {
     $searchPattern = "DeviceNetworkEvents`n"
 
     if ($Type -eq "UUIDs" -or $Type -eq "Emails" -or $Type -eq "IPs") {
-       
         $searchPattern += "| search "
         foreach ($indicator in $Indicators) {
             $searchPattern += "`"$indicator`" or`n        "
         }
         $searchPattern = $searchPattern.TrimEnd(" or`n        ")
+
+        if ($Type -eq "IPs") {
+            $searchPattern += "`n| project TimeGenerated, InitiatingProcessAccountName, DeviceName, InitiatingProcessFileName, RemoteIP"
+
+        }
     } elseif ($Type -eq "Domains" -or $Type -eq "URLs") {
-       
         $searchPattern += "| where (RemoteUrl == "
         foreach ($indicator in $Indicators) {
             $searchPattern += "`"$indicator`" or`n        RemoteUrl == "
         }
         $searchPattern = $searchPattern.TrimEnd(" or`n        RemoteUrl == ")
         $searchPattern += ")"
+        if ($Type -eq "Domains") {
+            $searchPattern += "`n| project TimeGenerated, DeviceName, RemoteIP, RemoteUrl, InitiatingProcessFileName, InitiatingProcessVersionInfoFileDescription, InitiatingProcessFolderPath"
+        }
     }
 
-    
     Set-Content -Path $FileName -Value $searchPattern
 }
+
+    
+ 
 
 $blobPath = "C:\Users\test\Desktop\i\32685_7b7d79488a8fcf482dd03104b09b3624_00000000000000000000000000000000"
 $outputDir = "ExtractedFiles"
